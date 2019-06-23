@@ -1,0 +1,317 @@
+<!doctype html>
+<html>
+  <head>
+    <!-- The scripts needed to generate charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+  </head>
+  <body style="background-color: #EFEEEE;">
+    <!-- The Divs which contain the Charts -->
+    <div style="width: 75%; margin: 0 auto; padding: 5px; background-color: white; border-radius: 7px; border: 1px solid lightgrey;">
+      <canvas id="myChartFrApp" class="chart"></canvas>
+    </div>
+    <br>
+    <div style="width: 75%; margin: 0 auto; padding: 5px; background-color: white; border-radius: 7px; border: 1px solid lightgrey;">
+      <canvas id="myChartTrApp" class="chart"></canvas>
+    </div>
+    <br>
+    <div style="width: 75%; margin: 0 auto; padding: 5px; background-color: white; border-radius: 7px; border: 1px solid lightgrey;">
+      <canvas id="myChartFrDep" class="chart"></canvas>
+    </div>
+    <br>
+    <div style="width: 75%; margin: 0 auto; padding: 5px; background-color: white; border-radius: 7px; border: 1px solid lightgrey;">
+      <canvas id="myChartTrDep" class="chart"></canvas>
+    </div>
+    <script>
+      // Variables to store imported data
+      // Generally you should avoid scoping like this, but we need it in this case
+      var date_labels; // dates (1)
+      
+      // Overall numbers
+      var fresh_new_app; // current year freshman applications (2)    
+      var fresh_old_app; // previous year freshman applications (3)
+      var fresh_new_dep; // current year freshman deposits (4)
+      var fresh_old_dep; // previous year freshman deposits (5)
+      var transfer_new_app; // current year transfer applications (6)
+      var transfer_old_app; // previous year transfer applications (7)
+      var transfer_new_dep; // current year transfer deposits (8)
+      var transfer_old_dep; // previous year transfer deposits (9)
+      
+      // In-state numbers
+      // current year freshman applications in-state (10)    
+      // previous year freshman applications in-state (11)
+      // current year freshman deposits in-state (12)
+      // previous year freshman deposits in-state (13)
+      // current year transfer applications in-state (14)
+      // previous year transfer applications in-state (15)
+      // current year transfer deposits in-state (16)
+      // previous year transfer deposits in-state (17)
+      
+      // Out-of-state numbers
+      // current year freshman applications out-of-state (18)    
+      // previous year freshman applications out-of-state (19)
+      // current year freshman deposits out-of-state (20)
+      // previous year freshman deposits out-of-state (21)
+      // current year transfer applications out-of-state (22)
+      // previous year transfer applications out-of-state (23)
+      // current year transfer deposits out-of-state (24)
+      // previous year transfer deposits out-of-state (25)
+      
+      // International numbers
+      // current year freshman applications out-of-state (26)    
+      // previous year freshman applications out-of-state (27)
+      // current year freshman deposits out-of-state (28)
+      // previous year freshman deposits out-of-state (29)
+      // current year transfer applications out-of-state (30)
+      // previous year transfer applications out-of-state (31)
+      // current year transfer deposits out-of-state (32)
+      // previous year transfer deposits out-of-state (33)
+      
+      // This function is reading in the CSV
+      // The URL needs to be changed to read in the appropriate file
+      d3.text("https://www.thearcadio.com/FA_19_Enrollment.csv", function(test_data) {
+        var parsedCSV = d3.csv.parseRows(test_data);
+        csvReader(parsedCSV);
+      });
+      
+      //This function is formatting the CSV to use in our charts
+      function csvReader(input){
+      	for(var i = 1; i < input[i].length; i++){
+      		var temp = ""
+      		for(var j = 0; j < input.length; j++){
+      			if((input[j][i]).trim() != "") {
+      			  if(i===1){
+      			    temp = temp + input[j][i].substring(0, input[j][i].length-5) + ", ";
+      			  }
+      			  else{
+      			   temp = temp + input[j][i] + ", "; 
+      			  }
+      			}
+      			else {
+      				temp = temp + "null, ";
+      			}			
+      		}//end of for loop
+      		if(temp.length > 3){ // prevents out of bounds errors
+      			temp = temp.slice(0,temp.length-2);
+      			var temp_array = temp.split(",").map(Number);
+      			if(i === 1){
+              date_labels = temp.slice(0,temp.length-2).split(",");
+            }
+            else if(i === 2){
+              fresh_new_app = temp_array.slice(1, temp_array.length);
+            }
+            else if(i === 3){
+              fresh_old_app = temp_array.slice(1, temp_array.length);
+            }
+            else if(i === 4){
+              fresh_new_dep = temp_array.slice(1, temp_array.length);
+            }
+      			else if(i === 5){
+              fresh_old_dep = temp_array.slice(1, temp_array.length);
+            }
+            else if(i === 6){
+              transfer_new_app = temp_array.slice(1, temp_array.length);
+            }
+            else if(i === 7){
+              transfer_old_app = temp_array.slice(1, temp_array.length);
+            }
+      			else if(i === 8){
+              transfer_new_dep = temp_array.slice(1, temp_array.length);
+            }
+            else if(i === 9){
+              transfer_old_dep = temp_array.slice(1, temp_array.length);
+            }
+      		}
+      	}
+      	makeChart() // The end of the first for loop signals that the charts can be created
+      }
+      
+      // This function generates the charts
+      function makeChart(){
+        // Freshman applications overall
+        var ctx = document.getElementById('myChartFrApp').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'line',
+        
+            data: {
+                labels: date_labels,
+                datasets: [{
+                    label: '2018',
+                    backgroundColor: 'rgba(0, 0, 0, 0)',
+                    borderColor: 'rgb(0, 0, 0)',
+                    pointRadius: 2,
+                    data: fresh_old_app
+                },
+                {
+                    label: '2019',
+                    backgroundColor: 'rgba(0, 0, 0, 0)',
+                    borderColor: 'rgb(0, 122, 133)',
+                    pointRadius: 2,
+                    data: fresh_new_app
+                }]
+            },
+        
+            options: {
+              legend:{
+                position: 'bottom',
+                boxWidth: 10
+              },
+              title:{
+                display: true,
+                fontSize: 22,
+                text: 'Freshman Applications'
+              },
+        			scales: {
+        				yAxes: [{
+        					display: true,
+        					scaleLabel: {
+        						display: true,
+        						fontSize: 15.5,
+        						labelString: '# of Applications'
+        					}
+        				}]
+        			}
+            }
+        });
+        
+        // Transfer applications overall
+        var ctx = document.getElementById('myChartTrApp').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'line',
+        
+            data: {
+                labels: date_labels,
+                datasets: [{
+                    label: '2018',
+                    backgroundColor: 'rgba(0, 0, 0, 0)',
+                    borderColor: 'rgb(0, 0, 0)',
+                    pointRadius: 2,
+                    data: transfer_old_app
+                },
+                {
+                    label: '2019',
+                    backgroundColor: 'rgba(0, 0, 0, 0)',
+                    borderColor: 'rgb(0, 122, 133)',
+                    pointRadius: 2,
+                    data: transfer_new_app
+                }]
+            },
+        
+            options: {
+              legend:{
+                position: 'bottom',
+                boxWidth: 10
+              },
+              title:{
+                display: true,
+                fontSize: 22,
+                text: 'Transfer Applications'
+              },
+        			scales: {
+        				yAxes: [{
+        					display: true,
+        					scaleLabel: {
+        						display: true,
+        						fontSize: 15.5,
+        						labelString: '# of Applications'
+        					}
+        				}]
+        			}
+            }
+        });
+        // Freshman deposits overall
+        var ctx = document.getElementById('myChartFrDep').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'line',
+        
+            data: {
+                labels: date_labels,
+                datasets: [{
+                    label: '2018',
+                    backgroundColor: 'rgba(0, 0, 0, 0)',
+                    borderColor: 'rgb(0, 0, 0)',
+                    pointRadius: 2,
+                    data: fresh_old_dep
+                },
+                {
+                    label: '2019',
+                    backgroundColor: 'rgba(0, 0, 0, 0)',
+                    borderColor: 'rgb(0, 122, 133)',
+                    pointRadius: 2,
+                    data: fresh_new_dep
+                }]
+            },
+        
+            options: {
+              legend:{
+                position: 'bottom',
+                boxWidth: 10
+              },
+              title:{
+                display: true,
+                fontSize: 22,
+                text: 'Freshman Deposits'
+              },
+        			scales: {
+        				yAxes: [{
+        					display: true,
+        					scaleLabel: {
+        						display: true,
+        						fontSize: 15.5,
+        						labelString: '# of Deposits'
+        					}
+        				}]
+        			}
+            }
+        });
+      
+        // Transfer deposits overall
+        var ctx = document.getElementById('myChartTrDep').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'line',
+        
+            data: {
+                labels: date_labels,
+                datasets: [{
+                    label: '2018',
+                    backgroundColor: 'rgba(0, 0, 0, 0)',
+                    borderColor: 'rgb(0, 0, 0)',
+                    pointRadius: 2,
+                    data: transfer_old_dep
+                },
+                {
+                    label: '2019',
+                    backgroundColor: 'rgba(0, 0, 0, 0)',
+                    borderColor: 'rgb(0, 122, 133)',
+                    pointRadius: 2,
+                    data: transfer_new_dep
+                }]
+            },
+        
+            options: {
+              legend:{
+                position: 'bottom'
+              },
+              title:{
+                display: true,
+                fontSize: 22,
+                text: 'Transfer Deposits'
+              },
+              line:{
+                tension: 0
+              },
+        			scales: {
+        				yAxes: [{
+        					display: true,
+        					scaleLabel: {
+                    display: true,
+                    fontSize: 15.5,
+                    labelString: '# of Deposits'
+        					}
+        				}]
+        			}
+            }
+        });
+      }
+    </script>
+</html>

@@ -1,0 +1,100 @@
+<html id = "page">
+	<head>
+		<style>
+			*{
+				margin: 0;
+				padding: 0;
+				border: 0;
+				font-size: 100%;
+				font: inherit;
+				vertical-align: baseline;
+			}
+			
+			html {
+				background-color: darkslategrey;
+			}
+			
+			#navi {
+			  width: 100%;
+			  background-color: cadetblue;
+			  height: 3em;
+			  margin-bottom: 15px;
+			}
+			
+			#main {
+			  margin-top: 15px;
+			  background-color: cadetblue; 
+			  width: 25%;
+			  margin: 0 auto;
+			}
+			
+			ul {
+			  padding-top: 15px;
+			}
+			
+			ul > li {
+				display: inline;
+				padding-left: 15px;
+			}
+
+			#myRadio {
+				margin-left: 10px;
+				margin-bottom: 10px;
+			}
+			
+			#myButton{
+			  padding: 7px;
+			  margin-bottom: 10px;
+			  width: 38%;
+			  margin-left: 8%;
+			  border: 2px outset grey;
+			}
+		</style>
+		<script>
+      function changeColor(color) {
+        if (color === "red"){
+          document.getElementById("page").style.backgroundColor = "red";
+          document.getElementById("navi").style.backgroundColor = "lightcoral";
+          document.getElementById("main").style.backgroundColor = "lightcoral";
+        }
+        if (color === "teal"){
+          document.getElementById("page").style.backgroundColor = "darkslategrey";
+          document.getElementById("navi").style.backgroundColor = "cadetblue";
+          document.getElementById("main").style.backgroundColor = "cadetblue";
+        }
+        if (color === "blue"){
+          document.getElementById("page").style.backgroundColor = "midnightblue";
+          document.getElementById("navi").style.backgroundColor = "royalblue";
+          document.getElementById("main").style.backgroundColor = "royalblue";
+        }
+        if (color === "green"){
+          document.getElementById("page").style.backgroundColor = "darkgreen";
+          document.getElementById("navi").style.backgroundColor = "lawngreen";
+          document.getElementById("main").style.backgroundColor = "lawngreen";
+        }
+      }
+    </script>
+	</head>
+	<body>
+	<div id = "navi"> 
+		<navbar> 
+			<ul>
+				<li> Link 1 </li>
+				<li> Link 2 </li>
+				<li> Link 3 </li>
+				<li> Link 4 </li>
+			</ul>
+		</navbar>
+	</div>
+	
+		<div id = "main">
+			<h1 style = "text-align: center;"> Please Select a Theme Color: </h1>
+			<form> 
+				<button onclick="changeColor('red')" type = "button" id = "myButton">Red Theme</button>
+				<button onclick="changeColor('teal')" type = "button" id = "myButton">Teal Theme</button> <br>
+				<button onclick="changeColor('blue')" type = "button" id = "myButton">Blue Theme</button>
+				<button onclick="changeColor('green')" type = "button" id = "myButton">Green Theme</button> <br>
+			</form>
+		</div>
+	</body>
+</html>
